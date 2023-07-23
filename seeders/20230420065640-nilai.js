@@ -3,32 +3,22 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        let seedNilai = [
-            {
-                id: 1,
-                siswaId: 1,
-                mapelId: 1,
-                kelas: 1,
-                nilai_k3_smst1: 86,
-                nilai_k4_smst1: 93,
-                nilai_k3_smst2: 0,
-                nilai_k4_smst2: 0,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                id: 2,
-                siswaId: 1,
-                mapelId: 2,
-                kelas: 1,
-                nilai_k3_smst1: 85,
-                nilai_k4_smst1: 95,
-                nilai_k3_smst2: 0,
-                nilai_k4_smst2: 0,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-        ];
+        let seedNilai = [];
+        for (let siswa = 1; siswa <= 2; siswa++) {
+            for (let mapel = 1; mapel <= 9; mapel++) {
+                seedNilai.push({
+                    siswaId: siswa,
+                    mapelId: mapel,
+                    kelas: siswa,
+                    nilai_k3_smst1: Math.floor(Math.random() * 101),
+                    nilai_k4_smst1: Math.floor(Math.random() * 101),
+                    nilai_k3_smst2: Math.floor(Math.random() * 101),
+                    nilai_k4_smst2: Math.floor(Math.random() * 101),
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                });
+            }
+        }
         return queryInterface.bulkInsert("nilais", seedNilai);
     },
 

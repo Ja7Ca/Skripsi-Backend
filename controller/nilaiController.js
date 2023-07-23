@@ -1,4 +1,14 @@
-const { nilai, kelas, mapel, siswa } = require("../models");
+const {
+    nilai,
+    kelas,
+    mapel,
+    siswa,
+    sikap,
+    eskul,
+    saran,
+    prestasi,
+    kehadiran,
+} = require("../models");
 
 module.exports = {
     getNilai: async (req, res) => {
@@ -33,18 +43,43 @@ module.exports = {
             });
     },
     editNilai: async (req, res) => {
-        const { dataNilai } = req.body;
+        const {
+            dataNilai,
+            dataSikap,
+            dataEskul,
+            dataSaran,
+            dataPrestasi,
+            dataKehadiran,
+        } = req.body;
         const { nisn } = req.params;
 
-        let konUpdate = false;
+        let konNilai = false;
+        let konSikap = false;
+        let konEskul = false;
+        let konSaran = false;
+        let konPrestasi = false;
+        let konKehadiran = false;
 
         const siswaId = await siswa.findOne({ where: { nisn } });
-        console.log(req.body);
+
+        // Nilai
         Object.keys(dataNilai).map((el) => {
             mapel
                 .findOne({ where: { alias: el } })
                 .then(async (result) => {
-                    konUpdate = await nilai.update(
+                    if (!dataNilai[el].ki3_1) {
+                        dataNilai[el].ki3_1 = 0;
+                    }
+                    if (!dataNilai[el].ki4_1) {
+                        dataNilai[el].ki4_1 = 0;
+                    }
+                    if (!dataNilai[el].ki3_2) {
+                        dataNilai[el].ki3_2 = 0;
+                    }
+                    if (!dataNilai[el].ki4_2) {
+                        dataNilai[el].ki4_2 = 0;
+                    }
+                    konNilai = await nilai.update(
                         {
                             nilai_k3_smst1: dataNilai[el].ki3_1,
                             nilai_k4_smst1: dataNilai[el].ki4_1,
@@ -58,7 +93,65 @@ module.exports = {
                     console(err.message);
                 });
         });
-        if (await konUpdate) {
+        // Sikap
+        konSikap = await sikap.update(
+            { spiritual: dataSikap.spiritual, sosial: dataSikap.sosial },
+            { where: { siswaId: siswaId.id } }
+        );
+        // Eskul
+        konEskul = await eskul.update(
+            {
+                pramuka: dataEskul.pramuka,
+                komputer: dataEskul.komputer,
+                menari: dataEskul.menari,
+                melukis: dataEskul.melukis,
+                marchingBand: dataEskul.marchingBand,
+                belaDiri: dataEskul.belaDiri,
+                musik: dataEskul.musik,
+                karawitan: dataEskul.arawitan,
+                bola: dataEskul.bola,
+                hadroh: dataEskul.hadroh,
+                tilawah: dataEskul.tilawah,
+                paduan: dataEskul.paduan,
+            },
+            { where: { siswaId: siswaId.id } }
+        );
+
+        // Saran
+        konSaran = await saran.update(
+            {
+                saran: dataSaran,
+            },
+            { where: { siswaId: siswaId.id } }
+        );
+
+        // Prestasi
+        konPrestasi = prestasi.update(
+            {
+                kesenian: dataPrestasi.kesenian,
+                olahRaga: dataPrestasi.olahRaga,
+            },
+            { where: { siswaId: siswaId.id } }
+        );
+
+        // Kehadiran
+        konKehadiran = kehadiran.update(
+            {
+                sakit: dataKehadiran.sakit,
+                ijin: dataKehadiran.ijin,
+                tanpaKehadiran: dataKehadiran.tanpaKeterangan,
+            },
+            { where: { siswaId: siswaId.id } }
+        );
+
+        if (
+            (await konNilai) &&
+            (await konSikap) &&
+            (await konEskul) &&
+            (await konSaran) &&
+            (await konPrestasi) &&
+            (await konKehadiran)
+        ) {
             res.json({ message: "success update nilai", success: true });
         } else {
             res.json({

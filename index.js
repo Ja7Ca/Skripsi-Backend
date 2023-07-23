@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const session = require("express-session");
 const bodyParser = require("body-parser");
+require("dotenv").config();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
@@ -31,12 +32,16 @@ const dashboardRouter = require("./router/dashboard");
 const siswaRouter = require("./router/siswa");
 const kelasRouter = require("./router/kelas");
 const nilaiRouter = require("./router/nilai");
+const sikapRouter = require("./router/dataRaport");
+const eskulRouter = require("./router/eskul");
 
 app.use(authRouter);
 app.use(dashboardRouter);
 app.use(kelasRouter);
 app.use(siswaRouter);
 app.use(nilaiRouter);
+app.use(sikapRouter);
+app.use(eskulRouter);
 
 app.listen(port, () => {
     console.log("Server is running on port 5000");

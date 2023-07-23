@@ -1,4 +1,14 @@
-const { kelas, siswa } = require("../models");
+const {
+    kelas,
+    siswa,
+    nilai,
+    mapel,
+    sikap,
+    eskul,
+    saran,
+    prestasi,
+    kehadiran,
+} = require("../models");
 
 module.exports = {
     getSiswa: (req, res) => {
@@ -57,7 +67,7 @@ module.exports = {
         let { nisn } = req.params;
         siswa
             .findOne({
-                attributes: ["nama"],
+                attributes: ["nama", "nisn"],
                 where: { nisn },
             })
             .then((response) => {
@@ -80,7 +90,7 @@ module.exports = {
         let { nis } = req.params;
         siswa
             .findOne({
-                attributes: ["nama"],
+                attributes: ["nama", "nis"],
                 where: { nis },
             })
             .then((response) => {
@@ -101,14 +111,14 @@ module.exports = {
     },
     addSiswa: (req, res) => {
         let { nama, nisn, nis, tempat, tanggal } = req.body;
+        let konSikap, konEskul, konSaran, konPrestasi, konKehadiran;
         kelas
             .findOne({
-                attributes: ["id"],
+                attributes: ["id", "rombel"],
                 where: { userId: req.user.id },
             })
-            .then((response) => {
-                console.log(response.id);
-                siswa
+            .then(async (response) => {
+                let proses = await siswa
                     .create({
                         nama,
                         nisn,
@@ -116,13 +126,78 @@ module.exports = {
                         tempatLahir: tempat,
                         tanggalLahir: tanggal,
                         kelaId: response.id,
+                        recycle: false,
                     })
-                    .then((resSiswa) => {
-                        res.json({
-                            message: "Success tambah siswa",
-                            success: true,
-                            data: resSiswa,
+                    .then(async (resSiswa) => {
+                        await mapel
+                            .findAll({ attributes: ["id"] })
+                            .then((resMapel) => {
+                                resMapel.map(async (el) => {
+                                    await nilai.create({
+                                        siswaId: resSiswa.id,
+                                        mapelId: el.id,
+                                        kelas: response.rombel,
+                                        nilai_k3_smst1: 0,
+                                        nilai_k4_smst1: 0,
+                                        nilai_k3_smst2: 0,
+                                        nilai_k4_smst2: 0,
+                                    });
+                                });
+                            });
+                        konSikap = await sikap.create({
+                            spiritual: "A",
+                            sosial: "A",
+                            siswaId: resSiswa.id,
                         });
+                        konEskul = await eskul.create({
+                            pramuka: "",
+                            komputer: "",
+                            menari: "",
+                            melukis: "",
+                            marchingBand: "",
+                            belaDiri: "",
+                            musik: "",
+                            karawitan: "",
+                            bola: "",
+                            hadroh: "",
+                            tilawah: "",
+                            paduan: "",
+                            siswaId: resSiswa.id,
+                        });
+                        konSaran = await saran.create({
+                            siswaId: resSiswa.id,
+                            saran: "",
+                        });
+                        konPrestasi = await prestasi.create({
+                            siswaId: resSiswa.id,
+                            olahRaga: "",
+                            kesenian: "",
+                        });
+                        konKehadiran = await kehadiran.create({
+                            siswaId: resSiswa.id,
+                            sakit: 0,
+                            ijin: 0,
+                            tanpaKehadiran: 0,
+                        });
+                        if (
+                            konSikap &&
+                            konEskul &&
+                            konSaran &&
+                            konPrestasi &&
+                            konKehadiran
+                        ) {
+                            res.json({
+                                message: "Success tambah siswa",
+                                success: true,
+                                data: resSiswa,
+                            });
+                        } else {
+                            res.json({
+                                message: "Gagal tambah siswa",
+                                success: false,
+                                data: err.message,
+                            });
+                        }
                     })
                     .catch((err) => {
                         res.json({
@@ -141,6 +216,7 @@ module.exports = {
                 attributes: [
                     "id",
                     "nama",
+                    "kelaId",
                     "nisn",
                     "nis",
                     "tempatLahir",
@@ -202,5 +278,90 @@ module.exports = {
                     data: err.message,
                 });
             });
+    },
+    addSiswaUploadExcel: async (req, res) => {
+        const { dataMurid } = req.body;
+
+        const kelasId = await kelas.findOne({
+            attributes: ["id", "rombel"],
+            where: { userId: req.user.id },
+        });
+
+        let proses = await dataMurid.map(async (el) => {
+            console.log(el);
+            await siswa
+                .create({
+                    nama: el.Nama,
+                    nisn: el.NISN,
+                    nis: el.NIS,
+                    kelaId: kelasId.id,
+                    tempatLahir: el["Tempat Lahir"],
+                    tanggalLahir: el["Tanggal Lahir"],
+                    recycle: false,
+                })
+                .then(async (resSiswa) => {
+                    await mapel
+                        .findAll({ attributes: ["id"] })
+                        .then((resMapel) => {
+                            resMapel.map(async (el) => {
+                                await nilai.create({
+                                    siswaId: resSiswa.id,
+                                    mapelId: el.id,
+                                    kelas: kelasId.rombel,
+                                    nilai_k3_smst1: 0,
+                                    nilai_k4_smst1: 0,
+                                    nilai_k3_smst2: 0,
+                                    nilai_k4_smst2: 0,
+                                });
+                            });
+                        });
+                    await sikap.create({
+                        spiritual: "A",
+                        sosial: "A",
+                        siswaId: resSiswa.id,
+                    });
+                    await eskul.create({
+                        pramuka: "",
+                        komputer: "",
+                        menari: "",
+                        melukis: "",
+                        marchingBand: "",
+                        belaDiri: "",
+                        musik: "",
+                        karawitan: "",
+                        bola: "",
+                        hadroh: "",
+                        tilawah: "",
+                        paduan: "",
+                        siswaId: resSiswa.id,
+                    });
+                    await saran.create({
+                        siswaId: resSiswa.id,
+                        saran: "",
+                    });
+                    await prestasi.create({
+                        siswaId: resSiswa.id,
+                        olahRaga: "",
+                        kesenian: "",
+                    });
+                    await kehadiran.create({
+                        siswaId: resSiswa.id,
+                        sakit: 0,
+                        ijin: 0,
+                        tanpaKehadiran: 0,
+                    });
+                });
+        });
+        if (proses) {
+            res.json({
+                message: "success tambah siswa",
+                success: true,
+            });
+        } else {
+            res.json({
+                message: "gagal tambah siswa",
+                success: false,
+            });
+        }
     },
 };

@@ -2,27 +2,25 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("kelas", {
+        await queryInterface.createTable("sarans", {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            userId: {
+            siswaId: {
                 type: Sequelize.INTEGER,
+                unique: true,
                 references: {
-                    model: "users",
+                    model: "siswas",
                     key: "id",
                 },
                 onUpdate: "cascade",
-                onDelete: "SET NULL",
+                onDelete: "cascade",
             },
-            rombel: {
-                type: Sequelize.ENUM("1", "2", "3", "4", "5", "6"),
-            },
-            nama: {
-                type: Sequelize.STRING,
+            saran: {
+                type: Sequelize.TEXT,
             },
             createdAt: {
                 allowNull: false,
@@ -35,6 +33,6 @@ module.exports = {
         });
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable("kelas");
+        await queryInterface.dropTable("sarans");
     },
 };

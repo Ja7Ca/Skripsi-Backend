@@ -11,5 +11,6 @@ router.get("/cek-nis/:nis", restrict, siswaController.cekNis);
 router.post("/siswa/tambah", restrict, siswaController.addSiswa);
 router.delete("/siswa/:nisn", restrict, siswaController.deleteSiswa);
 router.put("/edit-siswa", restrict, siswaController.guruEditSiswa);
+router.post("/upload-file", restrict, siswaController.addSiswaUploadExcel);
 
 module.exports = router;

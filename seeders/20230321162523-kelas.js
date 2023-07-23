@@ -20,6 +20,38 @@ module.exports = {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
+            {
+                id: 3,
+                rombel: "3",
+                nama: "Kelas 3",
+                userId: null,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                id: 4,
+                rombel: "4",
+                nama: "Kelas 4",
+                userId: null,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                id: 5,
+                rombel: "5",
+                nama: "Kelas 5",
+                userId: null,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                id: 6,
+                rombel: "6",
+                nama: "Kelas 6",
+                userId: null,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
         ];
         return queryInterface.bulkInsert("kelas", seedKelas);
     },

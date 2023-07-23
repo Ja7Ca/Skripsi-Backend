@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
             nis: DataTypes.TEXT,
             tempatLahir: DataTypes.STRING,
             tanggalLahir: DataTypes.DATEONLY,
+            recycle: DataTypes.BOOLEAN,
         },
         {
             sequelize,

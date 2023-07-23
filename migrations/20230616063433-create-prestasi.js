@@ -2,40 +2,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("siswas", {
+        await queryInterface.createTable("prestasis", {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            kelaId: {
+            siswaId: {
                 type: Sequelize.INTEGER,
+                unique: true,
                 references: {
-                    model: "kelas",
+                    model: "siswas",
                     key: "id",
                 },
                 onUpdate: "cascade",
                 onDelete: "cascade",
             },
-            nama: {
+            olahRaga: {
                 type: Sequelize.TEXT,
             },
-            nisn: {
+            kesenian: {
                 type: Sequelize.TEXT,
-                unique: true,
-            },
-            nis: {
-                type: Sequelize.TEXT,
-            },
-            tempatLahir: {
-                type: Sequelize.STRING,
-            },
-            tanggalLahir: {
-                type: Sequelize.DATEONLY,
-            },
-            recycle: {
-                type: Sequelize.BOOLEAN,
             },
             createdAt: {
                 allowNull: false,
@@ -48,13 +36,6 @@ module.exports = {
         });
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable("siswas");
-        // return queryInterface.sequelize.transaction((t) => {
-        //     return Promise.all([
-        //         queryInterface.removeColumn("siswa", "kelaId", {
-        //             transaction: t,
-        //         }),
-        //     ]);
-        // });
+        await queryInterface.dropTable("prestasis");
     },
 };

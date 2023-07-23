@@ -16,6 +16,10 @@ module.exports = {
             password: {
                 type: Sequelize.STRING,
             },
+            email: {
+                type: Sequelize.STRING,
+                unique: true,
+            },
             nama: {
                 type: Sequelize.STRING,
             },
@@ -24,6 +28,9 @@ module.exports = {
             },
             role: {
                 type: Sequelize.ENUM("admin", "guru"),
+            },
+            key: {
+                type: Sequelize.STRING,
             },
             createdAt: {
                 allowNull: false,

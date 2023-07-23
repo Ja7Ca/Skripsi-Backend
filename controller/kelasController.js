@@ -39,4 +39,21 @@ module.exports = {
                 });
         }
     },
+    getKelasKosong: (req, res) => {
+        kelas
+            .findAll({ where: { userId: null } })
+            .then((result) => {
+                res.json({
+                    message: "success get kelas kosong",
+                    success: true,
+                    data: result,
+                });
+            })
+            .catch((err) => {
+                res.json({
+                    message: err.message,
+                    success: false,
+                });
+            });
+    },
 };
