@@ -23,7 +23,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/public", express.static("public"));
-app.use(cors());
+app.use(cors({ credentials: true }));
+
+app.options("*", cors());
 
 const port = process.env.PORT || 5000;
 
