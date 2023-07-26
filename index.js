@@ -25,8 +25,6 @@ app.use(passport.session());
 app.use("/public", express.static("public"));
 app.use(cors());
 
-app.options("*", cors());
-
 const port = process.env.PORT || 5000;
 
 const authRouter = require("./router/auth");
