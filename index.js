@@ -23,7 +23,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/public", express.static("public"));
-app.use(cors({ credentials: true }));
+app.use(
+    cors({
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+        origin: "*",
+        allowedHeaders: ["Authorization"],
+    })
+);
 
 app.options("*", cors());
 
