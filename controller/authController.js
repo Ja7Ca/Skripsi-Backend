@@ -279,6 +279,7 @@ module.exports = {
     },
     cekUsername: (req, res) => {
         let { username } = req.params;
+        console.log(username);
         user.findOne({
             attributes: ["nama"],
             where: { username },

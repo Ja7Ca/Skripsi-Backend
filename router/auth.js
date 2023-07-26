@@ -14,7 +14,7 @@ router.get("/user", restrict, authController.getAllUser);
 router.get("/user/:username", restrict, authController.getOneUser);
 router.post("/user/updatePass", restrict, authController.updatePassUser);
 router.post("/user", restrict, authController.addUser);
-router.get("/cek-user/:id", restrict, authController.cekUsername);
+router.get("/cek-user/:username", restrict, authController.cekUsername);
 router.delete("/user/:id", restrict, authController.deleteUser);
 
 module.exports = router;
